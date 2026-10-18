@@ -1,0 +1,35 @@
+name: Duha_store PKG derle
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: ps3dev/ps3dev:latest
+    env:
+      PS3DEV: /usr/local/ps3dev
+      PSL1GHT: /usr/local/ps3dev
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Derle (ELF/SELF)
+        run: |
+          export PATH=$PATH:$PS3DEV/bin:$PS3DEV/ppu/bin:$PS3DEV/spu/bin
+          make
+
+      - name: PKG olustur
+        run: |
+          export PATH=$PATH:$PS3DEV/bin:$PS3DEV/ppu/bin:$PS3DEV/spu/bin
+          make pkg
+          ls -la *.pkg
+
+      - name: PKG dosyasini yukle
+        uses: actions/upload-artifact@v4
+        with:
+          name: Duha_store-pkg
+          path: |
+            *.pkg
+            *.self
